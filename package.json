@@ -1,0 +1,24 @@
+{
+  "name": "restful-api",
+  "version": "1.0.0",
+  "description": "使用node搭建的api接口，配合postman进行测试。",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "supervisor server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yinhaiying/node-restful-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yinhaiying/node-restful-api/issues"
+  },
+  "homepage": "https://github.com/yinhaiying/node-restful-api#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "supervisor": "^0.12.0"
+  }
+}
