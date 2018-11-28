@@ -15,6 +15,7 @@ mongoose.connect(mongoURI)
 
 //引入user
 const user = require('./routes/api/users.js');
+const profile = require('./routes/api/profile.js');
 
 
 //body-parser 中间件
@@ -35,6 +36,7 @@ app.get('/',(req,res) => {
 });
 
 app.use('/api/user',user);
+app.use('/api/profile',profile);
 
 
 
