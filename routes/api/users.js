@@ -22,7 +22,7 @@ router.get('/test',(req,res) => {
 // @access public
 
 router.post('/register',(req,res) => {
-  
+
   const { errors,isValid} = validatorRegisterInput(req.body);
   if(!isValid){
     return res.status(400).json(errors)
@@ -63,6 +63,30 @@ router.post('/register',(req,res) => {
 });
 
 
+// $router POST /api/users/login
+// @desc 返回token
+// @access public
+
+router.post('/login',(req,res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+//  查询email是否存在
+  User.findOne({email:email})
+    .then((user) => {
+      if(!user){
+        return res.status(404).json({error:'邮箱不存在'});
+      }else{
+      //  验证密码
+        bcrypt.compare(password,user.password, function(err,isMatch) {
+          if(!isMatch){
+            res.json({error:'密码错误'})
+          }else{
+            res.json({'success':true})
+          }
+        });
+      }
+    })
+});
 
 
 module.exports = router;
