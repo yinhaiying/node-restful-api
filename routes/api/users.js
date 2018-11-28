@@ -6,6 +6,7 @@ const User = require('../../models/User');
 const gravatar = require('gravatar');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
 const {secretOrKey} = require('../../config/keys');
 
@@ -87,13 +88,14 @@ router.post('/login',(req,res) => {
             res.json({error:'密码错误'})
           }else{
             //登陆成功之后，应该返回一个token
-
-            const rule = {name:user.name,id:user.name};
+            const rule = {name:user.name,id:user.id};
             jwt.sign(rule,secretOrKey,{expiresIn:3600},(err,token) => {
               if(err){
                 throw err
               }else{
-                res.json({success:true,token:token})
+                res.json({
+                  success:true,
+                  token:"Bearer "+token})
               }
             })
 
@@ -101,6 +103,19 @@ router.post('/login',(req,res) => {
         });
       }
     })
+});
+
+// $router GET /api/users/current
+// @desc return current user
+// @access private
+
+router.get('/current',passport.authenticate('jwt',{ session: false }),(req,res) => {
+  res.json({
+    id:req.user.id,
+    name:req.user.name,
+    email:req.user.email,
+    avatar:req.user.avatar
+  })
 });
 
 

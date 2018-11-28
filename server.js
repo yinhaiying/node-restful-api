@@ -2,6 +2,9 @@ const express = require('express');
 
 const app = express();
 
+const passport = require('passport');
+
+
 //连接数据库
 const mongoose = require('mongoose');
 const {mongoURI } = require('./config/keys');
@@ -19,6 +22,12 @@ const bodyParser = require('body-parser');
 //使用body-parser中间件
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+
+
+//使用passport
+app.use(passport.initialize());
+require('./config/passport')(passport);
+
 
 
 app.get('/',(req,res) => {
