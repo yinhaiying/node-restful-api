@@ -5,6 +5,11 @@ const User = require('../../models/User');
 
 const gravatar = require('gravatar');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const {secretOrKey} = require('../../config/keys');
+
+
 
 const validatorRegisterInput = require('../../validation/register');
 
@@ -81,7 +86,17 @@ router.post('/login',(req,res) => {
           if(!isMatch){
             res.json({error:'密码错误'})
           }else{
-            res.json({'success':true})
+            //登陆成功之后，应该返回一个token
+
+            const rule = {name:user.name,id:user.name};
+            jwt.sign(rule,secretOrKey,{expiresIn:3600},(err,token) => {
+              if(err){
+                throw err
+              }else{
+                res.json({success:true,token:token})
+              }
+            })
+
           }
         });
       }
