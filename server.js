@@ -1,6 +1,8 @@
 const express = require('express');
 
 const app = express();
+
+//连接数据库
 const mongoose = require('mongoose');
 const {mongoURI } = require('./config/keys');
 mongoose.connect(mongoURI)
@@ -8,10 +10,17 @@ mongoose.connect(mongoURI)
     console.log('连接成功')
   });
 
+//引入user
+const user = require('./routes/api/users.js');
+
 
 app.get('/',(req,res) => {
   res.json({success:'server works'})
 });
+
+app.use('/api/user',user);
+
+
 
 
 const port = process.env.PORT||5000;
