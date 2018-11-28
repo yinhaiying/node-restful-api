@@ -14,6 +14,13 @@ mongoose.connect(mongoURI)
 const user = require('./routes/api/users.js');
 
 
+//body-parser 中间件
+const bodyParser = require('body-parser');
+//使用body-parser中间件
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+
+
 app.get('/',(req,res) => {
   res.json({success:'server works'})
 });
