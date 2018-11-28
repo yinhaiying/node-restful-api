@@ -13,6 +13,7 @@ const {secretOrKey} = require('../../config/keys');
 
 
 const validatorRegisterInput = require('../../validation/register');
+const validatorLoginInput = require('../../validation/login');
 
 // $router GET /api/users/test
 // @desc 返回请求的json数据
@@ -74,6 +75,11 @@ router.post('/register',(req,res) => {
 // @access public
 
 router.post('/login',(req,res) => {
+  const { errors,isValid} = validatorLoginInput(req.body);
+  if(!isValid){
+    return res.status(400).json(errors)
+  }
+
   const email = req.body.email;
   const password = req.body.password;
 //  查询email是否存在
