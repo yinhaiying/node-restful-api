@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const Profile = require('../../models/Profile');
-
+const _ = require('lodash');
 const validatorProfileInput = require('../../validation/profile')
-
+const validatorExperienceInput = require('../../validation/experience');
 
 
 
@@ -112,6 +112,53 @@ router.post('/',passport.authenticate('jwt', { session: false }),(req,res) => {
     });
 });
 
+
+
+
+// $router POST /api/profile
+// @desc添加个人经历的接口
+// @access private
+
+router.post('/experience',passport.authenticate('jwt', { session: false }),(req,res) => {
+  const newExp = {};
+  if(req.body.title){
+    newExp.title = req.body.title;
+  }
+  if(req.body.company){
+    newExp.company = req.body.company;
+  }
+  if(req.body.location){
+    newExp.location = req.body.location;
+  }
+  if(req.body.from){
+    newExp.from= req.body.from;
+  }
+  if(req.body.to){
+    newExp.to = req.body.to;
+  }
+  if(req.body.description){
+    newExp.description = req.body.description;
+  }
+  Profile.findOne({user:req.user.id})
+    .then((profile) => {
+      profile.experience.push(newExp);
+      profile.save().then(profile => res.json(profile))
+    })
+    .catch(() => res.json({'error':'noprofile'}))
+});
+
+// $router POST /api/profile/experience
+// @desc删除个人经历的接口
+// @access private
+
+router.delete('/experience/:id',passport.authenticate('jwt', { session: false }),(req,res) => {
+  Profile.findOne({user:req.user.id})
+    .then((profile) => {
+      const removeIndex =  _.findIndex('profile.experience',(o) => {return o._id === req.params.id});
+      profile.experience.splice(removeIndex,1);
+      profile.save().then(() => res.json({success:true}))
+    })
+})
 
 
 
