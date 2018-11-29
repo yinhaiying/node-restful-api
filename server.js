@@ -38,7 +38,9 @@ app.get('/',(req,res) => {
 app.use('/api/user',user);
 app.use('/api/profile',profile);
 
-
+process.on('unhandledRejection', function(reason, promise) {
+  console.log(promise);
+});
 
 
 const port = process.env.PORT||5000;

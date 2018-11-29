@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const Profile = require('../../models/User');
+const Profile = require('../../models/Profile');
+
+const validatorProfileInput = require('../../validation/profile')
 
 
 
 
-
-const validatorRegisterInput = require('../../validation/register');
-const validatorLoginInput = require('../../validation/login');
 
 // $router GET /api/users/test
 // @desc 返回请求的json数据
@@ -35,7 +34,84 @@ router.get("/",passport.authenticate('jwt', { session: false }),(req,res) => {
 
       res.json(profile);
     }).catch(err => res.status(404).json(err));
-})
+});
+
+// $router POST /api/profile
+// @desc编辑个人用户信息
+// @access private
+router.post('/',passport.authenticate('jwt', { session: false }),(req,res) => {
+
+  const {errors,isValid} = validatorProfileInput(req.body);
+
+  if(!isValid){
+    return res.status(400).json(errors);
+  }
+
+
+  const profileField = {};
+  profileField.user = req.user.id;
+  if(req.body.handle){
+   profileField.handle = req.body.handle;
+  }
+
+  if(req.body.company){
+   profileField.company = req.body.company;
+  }
+
+  if(req.body.website){
+   profileField.website = req.body.website;
+  }
+
+  if(req.body.location){
+   profileField.location = req.body.location;
+  }
+
+  if(req.body.status){
+   profileField.status = req.body.status;
+  }
+
+  // skills  前端传递过来的肯定是一个字符串，因此需要及逆行转换
+  if(typeof req.body.skills !=='undefined'){
+   profileField.skills = req.body.skills.split(',');
+  }
+
+  if(req.body.bio){
+   profileField.bio = req.body.bio;
+  }
+  if(req.body.githubusername){
+   profileField.githubusername= req.body.githubusername;
+  }
+
+
+ profileField.social = {};
+
+  if(req.body.wechat){
+   profileField.social.wechat = req.body.wechat;
+  }
+  if(req.body.QQ){
+   profileField.social.QQ = req.body.QQ;
+  }
+  if(req.body.tengxunkt){
+   profileField.social.tengxunkt = req.body.tengxunkt;
+  }
+  if(req.body.wangyikt){
+   profileField.social.wangyikt = req.body.wangyikt;
+  }
+
+  Profile.findOne({user:req.user.id})
+    .then((profile) => {
+      if(profile){
+      //  如果存在，说明进行修改操作
+        Profile.findOneAndUpdate({user:req.user.id},{$set:profileField},{new:true})
+          .then((profile) => res.json(profile))
+      }else{
+        new Profile(profileField)
+          .save()
+          .then((profile) => res.json(profile));
+      }
+    });
+});
+
 
 
 

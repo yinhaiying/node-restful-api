@@ -1,11 +1,11 @@
 const JwtStrategy = require('passport-jwt').Strategy,
   ExtractJwt = require('passport-jwt').ExtractJwt;
 const opts = {}
-
+const {secretOrKey} = require('./keys');
 //得到token
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 //设置token时使用的加密名字
-opts.secretOrKey = 'secret';
+opts.secretOrKey = secretOrKey;
 
 
 const User = require('../models/User');
